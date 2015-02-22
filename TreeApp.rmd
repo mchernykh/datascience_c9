@@ -1,0 +1,74 @@
+---
+title: "Tree Application"
+author: "Mikhail Chernykh"
+date: "Monday, February 23, 2015"
+output: slidy_presentation
+---
+
+## Tree Application is fun!
+```{r, echo=FALSE}
+set.seed(1)
+rotMatrix <- function(angle) {
+      matrix(c(cos(angle), sin(angle), -sin(angle), cos(angle)), 2, 2)
+    }
+drawLines <- function (depth, root, direction) {
+  colors <- colorRamp(c("#05B311", "#F2BE2E"))
+  if (!depth %in% 1:15) {
+    return()
+  }
+  ang <- input$angle
+  lwd <- ifelse(input$clwd, input$lwd, depth + 1)
+  color <- rgb(colors(depth / as.numeric(input$depth)) / 255)
+  lines(c(root[1], root[1] + direction[1]), c(root[2], root[2] + direction[2]), lwd = lwd, col = color)
+  
+  new_root <- root + direction / 2
+  direction <- direction * 2 / 3
+  
+  new_direction_one <- rotMatrix(ang) %*% direction
+  new_direction_two <- rotMatrix(-ang) %*% direction
+  new_depth <- depth - 1
+  drawLines(new_depth, new_root, new_direction_one)
+  drawLines(new_depth, new_root, new_direction_two)
+}
+
+plotRandomTree <- function() {
+  input <- list(angle = runif(1, min = 0.05, max = 1), depth = sample(2:12, 1), clwd = runif(1) > 0.5, lwd = sample(1:5, 1))
+  plot(0:10, 0:10, type = "n", main = "Here is your tree!")
+  drawLines(as.numeric(input$depth), c(5, 0), c(0, 7))
+}
+```
+
+```{r, echo=FALSE,results='hide'}
+input <- list(angle = 0.3, depth = 13, clwd = FALSE, lwd = 2)
+plot(0:10, 0:10, type = "n", main = "Here is your tree!")
+drawLines(as.numeric(input$depth), c(5, 0), c(0, 7))
+
+```
+
+---
+
+## Customize your tree!
+
+- Select "depth" (actually, it grows up) of your tree by selector  
+
+- Choose angle between tree leaves, wide range of opportunities. Do you want to turn your tree upside... to inside? No problem!
+
+- Customize width of your tree, make it constant of make it automatically calculated!
+
+- Set exact value for width of lines used to draw a tree if you wish. (Values above 5 will be available in Pro+ version of tree app, stay tuned!)
+
+---
+
+## Variety of trees is astonishing!
+```{r}
+par(mfrow = c(2,4))
+for(i in 1:8) {
+  invisible(plotRandomTree())  
+}
+```
+
+---
+
+## Thanks for attention!
+
+Feel free to preorder Tree App Pro+, even more customizable and amazing!
